@@ -44,21 +44,77 @@ namespace LoneEftDmaRadar.Tarkov.Unity
         {
             try
             {
-                // Read the root bone first
-                var rootTransform = _player.Transform;
-                if (rootTransform?.TransformInternal.IsValid() ?? false)
+                // Read PlayerBody
+                var playerBodyAddr = Memory.ReadPtr(_player.Base + Offsets.Player._playerBody);
+                if (playerBodyAddr == 0)
                 {
-                    Root = rootTransform;
-                    _bones[Bones.HumanBase] = rootTransform;
+                    Debug.WriteLine($"[Skeleton] PlayerBody is null for {_player.Name}");
+                    return;
                 }
 
-                // Initialize all required bones for skeleton
-                foreach (var bone in GetRequiredBones())
+                // Read SkeletonRootJoint (Diz.Skinning.Skeleton)
+                var skeletonAddr = Memory.ReadPtr(playerBodyAddr + Offsets.PlayerBody.SkeletonRootJoint);
+                if (skeletonAddr == 0)
                 {
-                    // This would need to be implemented based on how the player object stores bone transforms
-                    // For now, we'll create placeholder logic
-                    // In the actual implementation, you'd read the bone transform chain from memory
+                    Debug.WriteLine($"[Skeleton] SkeletonRootJoint is null for {_player.Name}");
+                    return;
                 }
+
+                // Read the bone list (_values is a List<Transform>)
+                var boneListAddr = Memory.ReadPtr(skeletonAddr + Offsets.DizSkinningSkeleton._values);
+                if (boneListAddr == 0)
+                {
+                    Debug.WriteLine($"[Skeleton] Bone list is null for {_player.Name}");
+                    return;
+                }
+
+                // Read list size
+                var listSize = Memory.ReadValue<int>(boneListAddr + 0x18); // List._size offset
+                if (listSize <= 0 || listSize > 500)
+                {
+                    Debug.WriteLine($"[Skeleton] Invalid bone list size: {listSize}");
+                    return;
+                }
+
+                // Read list items pointer
+                var itemsAddr = Memory.ReadPtr(boneListAddr + 0x10); // List._items offset
+                if (itemsAddr == 0)
+                {
+                    Debug.WriteLine($"[Skeleton] List items pointer is null");
+                    return;
+                }
+
+                // Read each bone transform we need
+                foreach (var boneEnum in GetRequiredBones())
+                {
+                    var boneIndex = (uint)boneEnum;
+                    
+                    // Make sure index is within bounds
+                    if (boneIndex >= listSize)
+                        continue;
+
+                    // Read transform pointer from list (each pointer is 8 bytes)
+                    var transformPtr = Memory.ReadPtr(itemsAddr + (boneIndex * 0x8));
+                    
+                    if (transformPtr != 0 && transformPtr.IsValid())
+                    {
+                        try
+                        {
+                            var boneTransform = new UnityTransform(transformPtr);
+                            _bones[boneEnum] = boneTransform;
+                            
+                            // Set root
+                            if (boneEnum == Bones.HumanBase)
+                                Root = boneTransform;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[Skeleton] Failed to create transform for bone {boneEnum}: {ex.Message}");
+                        }
+                    }
+                }
+
+                Debug.WriteLine($"[Skeleton] Initialized {_bones.Count} bones for {_player.Name}");
             }
             catch (Exception ex)
             {

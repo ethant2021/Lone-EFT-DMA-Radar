@@ -113,6 +113,33 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld
                 player.OnRegRefresh(scatter, registered);
             }
             scatter.Execute();
+            
+            // Initialize and update skeletons for ESP
+            if (App.Config.ESP.Enabled)
+            {
+                foreach (var player in allPlayers.Where(p => p.IsActive && p.IsAlive))
+                {
+                    try
+                    {
+                        // Initialize skeleton if needed
+                        if (player.Skeleton == null)
+                        {
+                            player.Skeleton = new Unity.Skeleton(player);
+                        }
+                        
+                        // Update bone positions
+                        player.Skeleton?.UpdateBonePositions();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Don't spam console with skeleton errors
+                        if (Environment.TickCount64 % 5000 < 100) // Log occasionally
+                        {
+                            Debug.WriteLine($"[ESP] Skeleton update failed for {player.Name}: {ex.Message}");
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

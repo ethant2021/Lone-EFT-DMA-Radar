@@ -5,6 +5,7 @@ namespace SDK
         public readonly partial struct GameWorld
         {
             public const uint Location = 0xA8; // String
+            public const uint CameraManager = 0x19EE080;
         }
 
         public readonly partial struct ClientLocalGameWorld
@@ -154,7 +155,32 @@ namespace SDK
         public readonly partial struct PlayerBody
         {
             public const uint SkeletonRootJoint = 0x30; // Diz.Skinning.Skeleton
+            public const uint BoneArray = 0x28;
         }
+        public readonly partial struct Camera
+        {
+            public const uint ViewMatrix = 0x128;      // Matrix4x4 (64 bytes)
+            public const uint FOV = 0x1A8;             // float
+            public const uint AspectRatio = 0x518;     // float
+        }
+
+        public readonly partial struct CameraManager
+        {
+            public const uint FPSCamera = 0x128;       // Pointer
+            public const uint OpticCamera = 0x128;     // Pointer
+        }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     public readonly partial struct Enums

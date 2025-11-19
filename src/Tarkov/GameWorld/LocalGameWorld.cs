@@ -32,6 +32,7 @@ using LoneEftDmaRadar.Tarkov.GameWorld.Exits;
 using LoneEftDmaRadar.Tarkov.GameWorld.Explosives;
 using LoneEftDmaRadar.Tarkov.GameWorld.Loot.Helpers;
 using LoneEftDmaRadar.Tarkov.GameWorld.Player;
+using LoneEftDmaRadar.Tarkov.Unity;
 using VmmSharpEx.Options;
 
 namespace LoneEftDmaRadar.Tarkov.GameWorld
@@ -110,6 +111,13 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld
                 Loot = new(localGameWorld);
                 _exfilManager = new(mapID, _rgtPlayers.LocalPlayer.IsPmc);
                 _explosivesManager = new(localGameWorld);
+                Camera = new CameraManager();
+                
+                // Initialize viewport for ESP
+                CameraManager.UpdateViewportRes(
+                    App.Config.UI.MonitorWidth ?? 1920,
+                    App.Config.UI.MonitorHeight ?? 1080
+                );
             }
             catch
             {
@@ -256,6 +264,12 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld
                 return;
             }
 
+            // Update camera for ESP
+            if (App.Config.ESP.Enabled)
+            {
+                CameraManager.Update();
+            }
+
             using var scatter = Memory.CreateScatter(VmmFlags.NOCACHE);
             foreach (var player in players)
             {
@@ -340,6 +354,7 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld
         }
 
         #endregion
+
 
         #region IDisposable
 

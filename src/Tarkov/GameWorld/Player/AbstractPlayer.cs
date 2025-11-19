@@ -215,7 +215,7 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld.Player
         /// <summary>
         /// Skeleton for ESP rendering (lazy initialized).
         /// </summary>
-        public Skeleton Skeleton { get; private set; }
+        public Skeleton Skeleton { get; set; }
 
         /// <summary>
         /// TRUE if critical memory reads (position/rotation) have failed.
