@@ -2,8 +2,11 @@
  * Lone EFT DMA Radar - ESP Extension
  */
 
+using LoneEftDmaRadar.DMA;
+using LoneEftDmaRadar.Misc;
 using LoneEftDmaRadar.Tarkov.GameWorld.Player;
 using LoneEftDmaRadar.Tarkov.Unity.Structures;
+using SkiaSharp;
 using System.Numerics;
 
 namespace LoneEftDmaRadar.Tarkov.Unity

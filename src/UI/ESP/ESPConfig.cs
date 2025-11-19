@@ -2,6 +2,9 @@
  * Lone EFT DMA Radar - ESP Extension
  */
 
+using System.Text.Json.Serialization;
+using SkiaSharp;
+
 namespace LoneEftDmaRadar.UI.ESP
 {
     /// <summary>

@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using LoneEftDmaRadar.DMA;
+using LoneEftDmaRadar.Misc;
+using SkiaSharp;
 
 namespace LoneEftDmaRadar.Tarkov.Unity
 {
