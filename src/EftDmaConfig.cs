@@ -30,6 +30,7 @@ using LoneEftDmaRadar.DMA;
 using LoneEftDmaRadar.Misc.JSON;
 using LoneEftDmaRadar.UI.ColorPicker;
 using LoneEftDmaRadar.UI.Data;
+using LoneEftDmaRadar.UI.ESP;
 using LoneEftDmaRadar.UI.Loot;
 using System.Collections.ObjectModel;
 using VmmSharpEx.Extensions.Input;
@@ -128,6 +129,13 @@ namespace LoneEftDmaRadar
         [JsonInclude]
         [JsonPropertyName("infoWidget")]
         public InfoWidgetConfig InfoWidget { get; private set; } = new();
+
+        /// <summary>
+        /// ESP Configuration.
+        /// </summary>
+        [JsonInclude]
+        [JsonPropertyName("esp")]
+        public ESPConfig ESP { get; private set; } = new();
 
         /// <summary>
         /// Player Watchlist Collection.
